@@ -2,7 +2,7 @@ FROM ubuntu
 MAINTAINER Youssef Mounkaila < youssefmounkaila [ at ] gmail.com >
 
 ADD sv_publisher /root
-ADD /run_sv_publisher.sh /root
+ADD run_sv_publisher.sh /root
 
 RUN mkdir /log 
 
@@ -16,5 +16,5 @@ RUN apt-get install net-tools
 
 RUN chmod +x /root/run_sv_publisher.sh
 
-CMD  /run_sv_publisher.sh
+CMD  /root/run_sv_publisher.sh
 

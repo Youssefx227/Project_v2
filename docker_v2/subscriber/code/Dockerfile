@@ -2,7 +2,7 @@ FROM ubuntu
 MAINTAINER Youssef Mounkaila < youssefmounkaila [ at ] gmail.com >
 
 ADD sv_subscriber /root
-ADD /run_sv_subscriber.sh /root
+ADD run_sv_subscriber.sh /root
 
 RUN mkdir /log 
 
@@ -16,7 +16,7 @@ RUN apt-get install net-tools
 
 RUN chmod +x /root/run_sv_subscriber.sh
 
-CMD  /run_sv_subscriber.sh
+CMD  /root/run_sv_subscriber.sh
 
 
 
