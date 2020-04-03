@@ -320,6 +320,7 @@ int main(int argc, char** argv)
 
   SVReceiver receiver = SVReceiver_create();
   const char* filename =0;
+  double subscruption_time =0;
   char start;
   if (argc > 1){
   	/* interface réseau ou connecter le receiver si configuré */
@@ -327,7 +328,7 @@ int main(int argc, char** argv)
       printf("Set interface id: %s\n", argv[1]);
       /*récupère un nom de fichier si configuré*/
       filename = argv[3];
-
+      subscruption_time = atof(argv[4])*60.0; // temps de publication [min --> sec]
   }
   else {
       printf("Using interface eth0\n");
@@ -348,6 +349,7 @@ int main(int argc, char** argv)
     /* Commencer à écouter les messages SV - commence une nouvelle tâche de receiver en arrière-plan */
     SVReceiver_start(receiver);
     signal(SIGTSTP,signal_catch_stop);
+    gettimeofday(&debut_programme,NULL);
     while (start =='A'){
     	saving_in_comtrade();
     	 /** fonction qui sous-échantillonne tous les signaux d'entrées (+ filtrage anti-repliement)
@@ -377,7 +379,9 @@ int main(int argc, char** argv)
               exit(0);
             }
         }
-
+        gettimeofday(&maintenant,NULL);
+        /*si le temps est écoulé, on arrête la publication*/
+        if((maintenant.tv_sec - debut_programme.tv_sec) >= subscruption_time){exit(0);}   
     }
 /* Arrête de l'écoute les messages SV */
  SVReceiver_stop(receiver);

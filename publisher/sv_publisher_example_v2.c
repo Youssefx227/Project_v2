@@ -56,7 +56,6 @@
 
 static bool stop =false;
 long long int time_between_2_SV[4000];
- int min,max;
 
 void signal_catch_stop(){
  stop = true;
@@ -117,7 +116,7 @@ typedef struct data_{
     float* Iamp_init,* Vamp_init;
     float* Iamp, *Vamp;
     int*   Va,* Vb,* Vc,* Vn,* ia,* ib,* ic,* in;
-    double* theta ;
+    double* theta, *publication_time ;
   // pthread_mutex_t mutex;
 
 } data_;
@@ -217,16 +216,13 @@ void *publish (void *donnees){
      Vamp  = (*param).Vamp;
      float* Iamp = malloc(sizeof(float));
      Iamp  = (*param).Iamp;
-    float* Vamp_init = malloc(sizeof(float));
-    Vamp_init  = (*param).Vamp_init;
-    float* Iamp_init = malloc(sizeof(float));
-    Iamp_init  = (*param).Iamp_init;
 
     float* phase = malloc(sizeof(float));
     phase = (*param).phase;
     uint16_t* appid = malloc(sizeof(uint16_t));
     appid = (*param).appid;
-
+    double* publication_time = malloc(sizeof(double));
+    publication_time = (*param).publication_time;
     char* interface = malloc(sizeof(char));
      interface =(*param).interface ;
     char* svid = malloc(sizeof(char));
@@ -239,12 +235,16 @@ void *publish (void *donnees){
     struct timeval maintenant;
     struct timeval debut_thread;
     struct timeval debut_programme;
-    long int duration = 0;
-    int i=0,taille=20;
-    long int duree[taille];
+    int i=0;
     long long int A=0;
     int position =0;
-    int min,max;
+    char start;
+    struct timespec tempo;
+    Timestamp ts;
+    Timestamp_clearFlags(&ts);
+    struct timeval before_sending,after_sending;
+    struct timespec timer_usec;
+    uint64_t timestamp_usec; /* timestamp in microsecond */
       /* Paramètres communication*/
     CommParameters SVCommParameters;
     SVCommParameters.appId = *appid;
@@ -283,7 +283,7 @@ void *publish (void *donnees){
     SVPublisher_ASDU_setSmpCntWrap(asdu1, 4000);
     SVPublisher_ASDU_setRefrTm(asdu1, 0);
     SVPublisher_setupComplete(svPublisher);
-    char start;
+    
     printf("\nPublisher waiting for start command ... click A\n also CTRL_z to stop anytime in the program:\t");
     start = getchar();
     signal(SIGTSTP,signal_catch_stop);
@@ -292,14 +292,6 @@ void *publish (void *donnees){
      * former un temps absolu, il faut obtenir l'heure actuelle avec clock_gettime()
      * puis ajouter notre intervalle de sommeil tempo (250 µs) ** plus bas **
      */
-    struct timespec tempo;
-    Timestamp ts;
-    Timestamp_clearFlags(&ts);
-    struct timeval before_sending,after_sending;
-    struct timespec timer_usec;
-
-    uint64_t timestamp_usec; /* timestamp in microsecond */
-    int def=0,slp=0,cmpst=0;
     clock_gettime(CLOCK_MONOTONIC, &tempo);
     gettimeofday(&debut_programme,NULL);
     while (start == 'A'){  // boutton start appuyé et pas de demande d'arrêt
@@ -379,6 +371,10 @@ void *publish (void *donnees){
               exit(0);
             }
         }
+        gettimeofday(&maintenant,NULL);
+        /*si le temps est écoulé, on arrête la publication*/
+        if((maintenant.tv_sec - debut_programme.tv_sec) >= *publication_time){exit(0);}           
+      
          /* réinitialisation --- nouveau cycle */
           *n=0;
           i+=1;
@@ -398,6 +394,7 @@ int main(int argc, char** argv) {
     char * filename = 0;
     char* svid = 0;
     uint16_t appid;
+    double publication_time;
     float n=0.0,fech=4000.0;
     int Va,Vb,Vc,Vn,ia,ib,ic,in;
     float Vamp_init =  11000.0*sqrt(2);
@@ -409,11 +406,12 @@ int main(int argc, char** argv) {
     float phase =0.0,f_nominal =50.0,samplesPerCycle=80.0,f=50.0,w= 2*M_PI*f;
 
     if (argc > 1){
-
-      Interface = argv[1];
-      appid = strtol(argv[2],NULL,16);
-      filename = argv[3];
-      svid = argv[4];
+ 
+      Interface = argv[1]; // NIC
+      appid = strtol(argv[2],NULL,16); //appid
+      filename = argv[3];  //fichier de mesure des latence
+      svid = argv[4];      // Nom de l'IED
+      publication_time = atof(argv[5])*60.0; // temps de publication [min --> sec]
     }
     else{
       Interface = "eth0";
@@ -455,6 +453,7 @@ int main(int argc, char** argv) {
     thread_data.filename = filename;
     thread_data.appid = &appid;
     thread_data.svid = svid;
+    thread_data.publication_time = &publication_time;
     /* décalaration des threads */
     pthread_t thread_publish;
 

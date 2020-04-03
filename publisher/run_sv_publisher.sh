@@ -1,8 +1,8 @@
 
  #lancement de n flux de SV_publisher simultanément [terminal Ubuntu!]
 
-        # exécutable #interface  #appid   
- sudo gnome-terminal  -x ./sv_publisher lo  0x4000 "./logfiles/time_file.csv"  "MU_POSTE_1" &
+        # exécutable #interface  #appid  #fichier_latence #Nom IED #durée publication [min] 
+ sudo gnome-terminal  -x ./sv_publisher lo  0x4000 "./logfiles/time_file.csv"  "MU_POSTE_1" 1 &
  #sudo gnome-terminal  -x ./sv_publisher enxe4b97ac3b148   0x4001 "./time_stamp2.csv"  "MU_POSTE_2" & 
  #sudo gnome-terminal  -x ./sv_publisher enxe4b97ac3b148   0x4002 "./time_stamp3.csv"  "MU_POSTE_3" &
  #sudo gnome-terminal  -x ./sv_publisher enxe4b97ac3b148   0x4003 "./time_stamp4.csv" "MU_POSTE_4"& 
