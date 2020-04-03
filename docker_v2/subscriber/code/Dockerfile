@@ -20,6 +20,3 @@ CMD  /root/run_sv_subscriber.sh
 
 
 
-
-
-

@@ -2,7 +2,7 @@
 
 #lancement de mes sv_publisher
 
-sudo  docker run -i  -v  /home/youssef/Documents/youssef_C/docker_v2/subscriber/logdocker/sv1:/log --cap-add sys_nice --cap-add net_admin  --net macvlan_net   sv_s1:latest &
+ docker run -i  -v  /home/youssef/Documents/youssef_C/docker_v2/subscriber/logdocker/sv1:/log --cap-add sys_nice --cap-add net_admin  --net macvlan_net   sv_s1:latest &
 #sudo docker run -i  -v  /home/youssef/Documents/youssef_C/docker_v2/subscriber/logdocker/sv2:/log --cap-add sys_nice --cap-add net_admin   --net macvlan_net   sv_s2:latest &
 #sudo docker run -i  -v  /home/youssef/Documents/youssef_C/docker_v2/subscriber/logdocker/sv3:/log --cap-add sys_nice --cap-add net_admin   --net macvlan_net  sv_s3:latest &
 #sudo docker run -i  -v  /home/youssef/Documents/youssef_C/docker_v2/subscriber/logdocker/sv4:/log --cap-add sys_nice --cap-add net_admin   --net macvlan_net  sv_s4:latest &
