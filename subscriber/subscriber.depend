@@ -1,0 +1,57 @@
+# depslib dependency file v1.0
+1553597172 source:/home/nathan/Documents/youssef_C/subscriber/sv_subscriber_example.c
+	<hal_thread.h>
+	<signal.h>
+	<stdio.h>
+	<sv_subscriber.h>
+
+1548840143 /home/nathan/Documents/youssef_C/inc/hal_thread.h
+	<stdbool.h>
+
+1553093534 /home/nathan/Documents/youssef_C/inc/sv_subscriber.h
+	"libiec61850_common_api.h"
+	"iec61850_common.h"
+	"hal_ethernet.h"
+
+1553085163 /home/nathan/Documents/youssef_C/inc/libiec61850_common_api.h
+	<stdlib.h>
+	<stdarg.h>
+	<stdint.h>
+	<stdbool.h>
+	<string.h>
+	"hal_time.h"
+	"mms_value.h"
+
+1548840143 /home/nathan/Documents/youssef_C/inc/hal_time.h
+	<stdint.h>
+
+1548840143 /home/nathan/Documents/youssef_C/inc/mms_value.h
+	"libiec61850_common_api.h"
+	"mms_common.h"
+	"mms_types.h"
+	"ber_integer.h"
+
+1548840143 /home/nathan/Documents/youssef_C/inc/mms_common.h
+	"libiec61850_common_api.h"
+
+1548840143 /home/nathan/Documents/youssef_C/inc/mms_types.h
+	"libiec61850_common_api.h"
+
+1548840143 /home/nathan/Documents/youssef_C/inc/ber_integer.h
+	"asn1_ber_primitive_value.h"
+
+1548840143 /home/nathan/Documents/youssef_C/inc/asn1_ber_primitive_value.h
+	"libiec61850_common_api.h"
+
+1548840143 /home/nathan/Documents/youssef_C/inc/iec61850_common.h
+	"libiec61850_common_api.h"
+	"logging_api.h"
+
+1548840143 /home/nathan/Documents/youssef_C/inc/logging_api.h
+	<stdint.h>
+	<stdbool.h>
+
+1548840143 /home/nathan/Documents/youssef_C/inc/hal_ethernet.h
+	<stdint.h>
+	<stdbool.h>
+
