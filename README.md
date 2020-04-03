@@ -1,5 +1,5 @@
-# Project_v2
-You need to rebuild the entire lib-iec61850 before starting to make or launch anything else.
+# Project_v2  or
+You need to rebuild the entire lib-iec61850 before making or launching anything else.
 
 Publisher function : used to publish on a specified interface in the script run_sv_publisher.sh
 Start/stop/exit command : when you launch the program : terminal ask you to press the button "A", so that  publication of SV begins.
