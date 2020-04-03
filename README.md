@@ -17,3 +17,4 @@ I used "gnome-terminal -x" in my scripts to to open two separate windows in whic
 
 You need to ajust interface name in run_sv_xxx.sh scripts in function of your own application
 
+You can also specify in run_sv_xxx.sh the time in [min] ou want the program to execut (especially for automatic docker tests)
