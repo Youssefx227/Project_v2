@@ -13,5 +13,7 @@ log file contains the time between the acquisition of two consecutive SVs and th
 
 You can use docker to launch these programs into containers. please see the docker_v2 directory
 
+I used "gnome-terminal -x" in my scripts to to open two separate windows in which 1 publisher and 1 subscriber are executed, this makes it easier to view for me but if you don't have ubuntu delete it from the script run_sv_xxx.sh
+
 
 
