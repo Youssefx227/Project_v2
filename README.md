@@ -16,4 +16,5 @@ You can use docker to launch these programs into containers. please see the dock
 I used "gnome-terminal -x" in my scripts to to open two separate windows in which 1 publisher and 1 subscriber are executed, this makes it easier to view for me but if you don't have ubuntu delete it from  run_sv_xxx.sh scripts
 
 You need to ajust interface name in run_sv_xxx.sh scripts in function of your own application
+
 You can also specify in run_sv_xxx.sh the time in [min] ou want the program to execut (especially for automatic docker tests)
