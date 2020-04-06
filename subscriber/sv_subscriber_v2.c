@@ -79,7 +79,7 @@ void saving_in_comtrade(){
   FILE *signal;
   signal = fopen("./files/comtrade.csv","w+r");
 /*docker*/
-  //signal = fopen("/log/comtrade.csv","w+r");
+ // signal = fopen("/log/comtrade.csv","w+r");
   for(int i=0;i<nech;i++){
     fprintf(signal,"%ld,",n[i]);
     fprintf(signal,"%s,",svid);
@@ -200,12 +200,12 @@ void decimate(double *buffer,double* phasor_mod,double* phasor_arg,int factorDec
   if(NbreSamples==(nech-1)){
     	FIR (buffer,bufferFIR,fc);  //filtrage numérique
     	FILE *doc;
-    	char docname [100] = "./files/signal_filtré_";
+        char docname [100] = "./files/signal_filtré_";
 	/*docker*/
 	//char docname [100] = "/log/signal_filtré_";
     	strcat(docname,phasor_name);
     	strcat(docname,".csv");
-      doc = fopen(docname, "w+r");
+        doc = fopen(docname, "w+r");
 	 	  while(i<=NbreSamples){
   			fprintf(doc,"%s\t","signal de sortie filtré");
   			fprintf(doc,"%s\n","signal d'origine");
@@ -358,7 +358,7 @@ int main(int argc, char** argv)
     	     diminue le taux d'échantillonnage  */
     	phasor_extraction();
 
-        if (stop == true ||(maintenant.tv_sec - debut_programme.tv_sec) >= subscription_time){  // dès qu'on stop on génère un fichier de log
+        if (stop == true){  // dès qu'on stop on génère un fichier de log
           FILE * fichier_timestamp;
           fichier_timestamp = fopen(filename, "w+r");
           fprintf(fichier_timestamp," time_between_2_SV\t jitter\n");

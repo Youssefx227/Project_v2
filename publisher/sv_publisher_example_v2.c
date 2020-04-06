@@ -343,7 +343,7 @@ void *publish (void *donnees){
               *n+=1;
         }
         
-        if (stop == true||((maintenant.tv_sec - debut_programme.tv_sec) >= *publication_time)){  // dès qu'on stop on génère un log
+        if (stop == true){  // dès qu'on stop on génère un log
           FILE * fichier_timestamp;
           fichier_timestamp = fopen(filename, "w+r");
           fprintf(fichier_timestamp," time_between_2_SV\t jitter\n");
