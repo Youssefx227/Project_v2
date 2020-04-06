@@ -1,4 +1,4 @@
-# Project_v2  or
+# Project_v2
 You need to rebuild the entire lib-iec61850 before making or launching anything else.
 
 Publisher function : used to publish on a specified interface in the script run_sv_publisher.sh
