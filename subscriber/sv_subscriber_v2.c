@@ -324,12 +324,13 @@ int main(int argc, char** argv)
   SVReceiver receiver = SVReceiver_create();
   const char* filename =0;
   double subscription_time =0;
-  char start;
+  uint16_t appid;
   if (argc > 1){
   	/* interface réseau ou connecter le receiver si configuré */
       SVReceiver_setInterfaceId(receiver, argv[1]);
       printf("Set interface id: %s\n", argv[1]);
       /*récupère un nom de fichier si configuré*/
+       appid = strtol(argv[2],NULL,16); //appid
       filename = argv[3];
       subscription_time = atof(argv[4])*60.0; // temps de publication [min --> sec]
   }
@@ -342,24 +343,22 @@ int main(int argc, char** argv)
 
     for(i=0;i<nbre_signal;i++){
       /* Créer un subscriber écoutant les messages SV  avec un APPID 0x4000 par défaut */
-      subscriber[i] = SVSubscriber_create(NULL,0x4000);
+      subscriber[i] = SVSubscriber_create(NULL,appid);
       SVSubscriber_setListener(subscriber[i], svUpdateListener, NULL);
       /* Connecter le subscriber au receiver */
       SVReceiver_addSubscriber(receiver, subscriber[i]);
     }
-    printf("\n Subsriber waiting for start command ... click A\n also CTRL_z to stop anytime in the program:\t");
-    start = getchar();
     /* Commencer à écouter les messages SV - commence une nouvelle tâche de receiver en arrière-plan */
     SVReceiver_start(receiver);
     signal(SIGTSTP,signal_catch_stop);
     gettimeofday(&debut_programme,NULL);
-    while (start =='A'){
+    while (1){
     	saving_in_comtrade();
     	 /** fonction qui sous-échantillonne tous les signaux d'entrées (+ filtrage anti-repliement)
     	     diminue le taux d'échantillonnage  */
     	phasor_extraction();
 
-        if (stop == true){  // dès qu'on stop on génère un fichier de log
+        if (stop == true ||(maintenant.tv_sec - debut_programme.tv_sec) >= subscription_time){  // dès qu'on stop on génère un fichier de log
           FILE * fichier_timestamp;
           fichier_timestamp = fopen(filename, "w+r");
           fprintf(fichier_timestamp," time_between_2_SV\t jitter\n");
@@ -384,7 +383,19 @@ int main(int argc, char** argv)
         }
         gettimeofday(&maintenant,NULL);
         /*si le temps est écoulé, on arrête la publication*/
-        if((maintenant.tv_sec - debut_programme.tv_sec) >= subscription_time){exit(0);}   
+        if((maintenant.tv_sec - debut_programme.tv_sec) >= subscription_time){
+		  FILE * fichier_timestamp;
+          fichier_timestamp = fopen(filename, "w+r");
+          fprintf(fichier_timestamp," time_between_2_SV\t jitter\n");
+          if(fichier_timestamp != NULL) {
+           for(i=0;i<nech;i++){
+             fprintf(fichier_timestamp,"%lld\t",time_between_2_SV[i]); // time between 2 consecutive SV
+             fprintf(fichier_timestamp,"%lf\n",fabs(time_between_2_SV[i]-250)); // jitter
+           } 
+           fclose(fichier_timestamp);
+          }
+           exit(0);   
+        }
     }
 /* Arrête de l'écoute les messages SV */
  SVReceiver_stop(receiver);

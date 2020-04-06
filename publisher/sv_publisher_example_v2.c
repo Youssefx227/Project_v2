@@ -238,7 +238,6 @@ void *publish (void *donnees){
     int i=0;
     long long int A=0;
     int position =0;
-    char start;
     struct timespec tempo;
     Timestamp ts;
     Timestamp_clearFlags(&ts);
@@ -283,9 +282,6 @@ void *publish (void *donnees){
     SVPublisher_ASDU_setSmpCntWrap(asdu1, 4000);
     SVPublisher_ASDU_setRefrTm(asdu1, 0);
     SVPublisher_setupComplete(svPublisher);
-    
-    printf("\nPublisher waiting for start command ... click A\n also CTRL_z to stop anytime in the program:\t");
-    start = getchar();
     signal(SIGTSTP,signal_catch_stop);
 
     /* Le délai tempo n'est pas en temps absolu. Pour
@@ -294,7 +290,7 @@ void *publish (void *donnees){
      */
     clock_gettime(CLOCK_MONOTONIC, &tempo);
     gettimeofday(&debut_programme,NULL);
-    while (start == 'A'){  // boutton start appuyé et pas de demande d'arrêt
+    while (1){  // boutton start appuyé et pas de demande d'arrêt
         gettimeofday(&debut_thread,NULL);
         while(*n<4000){
 
@@ -347,7 +343,7 @@ void *publish (void *donnees){
               *n+=1;
         }
         
-        if (stop == true){  // dès qu'on stop on génère un log
+        if (stop == true||((maintenant.tv_sec - debut_programme.tv_sec) >= *publication_time)){  // dès qu'on stop on génère un log
           FILE * fichier_timestamp;
           fichier_timestamp = fopen(filename, "w+r");
           fprintf(fichier_timestamp," time_between_2_SV\t jitter\n");
@@ -373,7 +369,20 @@ void *publish (void *donnees){
         }
         gettimeofday(&maintenant,NULL);
         /*si le temps est écoulé, on arrête la publication*/
-        if((maintenant.tv_sec - debut_programme.tv_sec) >= *publication_time){exit(0);}           
+        if((maintenant.tv_sec - debut_programme.tv_sec) >= *publication_time){
+          FILE * fichier_timestamp;
+          fichier_timestamp = fopen(filename, "w+r");
+          fprintf(fichier_timestamp," time_between_2_SV\t jitter\n");
+           if(fichier_timestamp != NULL) {
+              for(i=0;i<4000;i++){
+                fprintf(fichier_timestamp,"%lld\t", time_between_2_SV [i]); // time between 2 consecutive SV
+                fprintf(fichier_timestamp,"%lf\n",fabs(time_between_2_SV[i]-250)); // jitter
+              }
+              
+              fclose(fichier_timestamp);
+            }
+          exit(0);
+        }          
       
          /* réinitialisation --- nouveau cycle */
           *n=0;
@@ -408,6 +417,7 @@ int main(int argc, char** argv) {
     if (argc > 1){
  
       Interface = argv[1]; // NIC
+      printf("Using Interface : %s \n",Interface);
       appid = strtol(argv[2],NULL,16); //appid
       filename = argv[3];  //fichier de mesure des latence
       svid = argv[4];      // Nom de l'IED
