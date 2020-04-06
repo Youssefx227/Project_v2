@@ -78,7 +78,8 @@ void saving_in_comtrade(){
 
   FILE *signal;
   signal = fopen("./files/comtrade.csv","w+r");
-  //signal = fopen("./comtrade.dat","w+r");
+/*docker*/
+  //signal = fopen("/log/comtrade.csv","w+r");
   for(int i=0;i<nech;i++){
     fprintf(signal,"%ld,",n[i]);
     fprintf(signal,"%s,",svid);
@@ -200,6 +201,8 @@ void decimate(double *buffer,double* phasor_mod,double* phasor_arg,int factorDec
     	FIR (buffer,bufferFIR,fc);  //filtrage numérique
     	FILE *doc;
     	char docname [100] = "./files/signal_filtré_";
+	/*docker*/
+	//char docname [100] = "/log/signal_filtré_";
     	strcat(docname,phasor_name);
     	strcat(docname,".csv");
       doc = fopen(docname, "w+r");
@@ -245,6 +248,8 @@ void phasor_extraction (){
 
   FILE *phasor_csv;
   phasor_csv = fopen("./files/phasor_tab.csv","w+r");
+/*docker*/
+//phasor_csv = fopen("/log/phasor_tab.csv","w+r");
   //char* en_tete1 ="va\t\tvb\t\tvc\t\tia\t\tib\t\tic";
    char* en_tete1 ="ia";
   fprintf(phasor_csv,"%s\n",en_tete1);
@@ -304,23 +309,21 @@ svUpdateListener (SVSubscriber subscriber, void* parameter, SVSubscriber_ASDU as
 
 int main(int argc, char** argv)
 {
-  /* choix du CPU */
+  /* 
   const int core_id = 2;  // CPU3
-  /* récupération de l'identifiant de la thread*/
- //const pthread_t pid = getpid();
-  /* cpu_set_t: This data set is a bitset where each bit represents a CPU */
+
   cpu_set_t cpuset;
-  /* CPU_ZERO: This macro initializes the CPU set set to be the empty set */
+
   CPU_ZERO(&cpuset);
-  /* CPU_SET: This macro adds cpu to the CPU set set */
+
   CPU_SET(core_id, &cpuset);
-  /* pthread_setaffinity_np: La fonction pthread_setaffinity()  fixe  le masque du CPU_affinity de la thread au CPU pointé par cpuset.
-     Si l'appel est un succes, et la thread n'est pas déjà entrain de tourner sur un des  CPU dans cpuset, alors il est migré vers un de ces CPUs */
+ 
   sched_setaffinity(0, sizeof(cpu_set_t), &cpuset);
+*/
 
   SVReceiver receiver = SVReceiver_create();
   const char* filename =0;
-  double subscruption_time =0;
+  double subscription_time =0;
   char start;
   if (argc > 1){
   	/* interface réseau ou connecter le receiver si configuré */
@@ -328,7 +331,7 @@ int main(int argc, char** argv)
       printf("Set interface id: %s\n", argv[1]);
       /*récupère un nom de fichier si configuré*/
       filename = argv[3];
-      subscruption_time = atof(argv[4])*60.0; // temps de publication [min --> sec]
+      subscription_time = atof(argv[4])*60.0; // temps de publication [min --> sec]
   }
   else {
       printf("Using interface eth0\n");
@@ -381,7 +384,7 @@ int main(int argc, char** argv)
         }
         gettimeofday(&maintenant,NULL);
         /*si le temps est écoulé, on arrête la publication*/
-        if((maintenant.tv_sec - debut_programme.tv_sec) >= subscruption_time){exit(0);}   
+        if((maintenant.tv_sec - debut_programme.tv_sec) >= subscription_time){exit(0);}   
     }
 /* Arrête de l'écoute les messages SV */
  SVReceiver_stop(receiver);
